@@ -25,11 +25,10 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
   constructor(configService: ConfigService) {
     const keycloakUrl = configService.get<string>('KEYCLOAK_AUTH_SERVER_URL');
     const realm = configService.get<string>('KEYCLOAK_REALM');
-    const clientId = configService.get<string>('KEYCLOAK_CLIENT_ID');
     const issuer =
       configService.get<string>('JWT_ISSUER') ||
       `${keycloakUrl}/realms/${realm}`;
-    const audience = configService.get<string>('JWT_AUDIENCE') || clientId;
+    const audience = configService.get<string>('JWT_AUDIENCE');
 
     super({
       secretOrKeyProvider: passportJwtSecret({
@@ -40,7 +39,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
       }),
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
       issuer,
-      audience,
+      ...(audience ? { audience } : {}),
       algorithms: ['RS256'],
     });
   }
