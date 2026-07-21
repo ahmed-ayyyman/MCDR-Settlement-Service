@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sign in · Console</title>
+<style>
+  :root{
+    --ink:#151A21;
+    --panel:#1C232D;
+    --paper:#F4F1E9;
+    --line: rgba(21,26,33,0.12);
+    --brass:#B8860F;
+    --brass-soft: rgba(184,134,15,0.14);
+    --slate-blue:#3A5A78;
+    --slate-blue-soft: rgba(58,90,120,0.14);
+    --muted:#6B7280;
+    --good:#3F7B57;
+    --accent: var(--brass);
+    --accent-soft: var(--brass-soft);
+    font-size:16px;
+  }
+
+  *{ box-sizing:border-box; }
+
+  html,body{
+    margin:0;
+    height:100%;
+    background:var(--paper);
+    color:var(--ink);
+    font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  }
+
+  @font-face{
+    font-family:"Fraunces";
+    src: local("Fraunces");
+  }
+
+  .stage{
+    min-height:100vh;
+    display:grid;
+    grid-template-columns: 1.05fr 1fr;
+  }
+
+  /* ---------- LEFT: identity panel ---------- */
+  .brand{
+    background:
+      radial-gradient(circle at 18% 12%, rgba(184,134,15,0.16), transparent 45%),
+      var(--panel);
+    color:var(--paper);
+    position:relative;
+    overflow:hidden;
+    padding:56px 64px;
+    display:flex;
+    flex-direction:column;
+    justify-content:space-between;
+  }
+
+  .brand::before{
+    content:"";
+    position:absolute;
+    inset:0;
+    background-image:
+      linear-gradient(rgba(244,241,233,0.05) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(244,241,233,0.05) 1px, transparent 1px);
+    background-size: 42px 42px;
+    mask-image: radial-gradient(circle at 30% 20%, black 0%, transparent 65%);
+  }
+
+  .mark{
+    display:flex;
+    align-items:center;
+    gap:12px;
+    position:relative;
+    z-index:1;
+  }
+
+  .mark .glyph{
+    width:38px; height:38px;
+    border:1.5px solid rgba(244,241,233,0.5);
+    border-radius:9px;
+    display:flex; align-items:center; justify-content:center;
+    font-family:"Fraunces", Georgia, serif;
+    font-size:19px;
+    font-weight:600;
+    flex-shrink:0;
+  }
+
+  .mark .wordmark{
+    font-family:"Fraunces", Georgia, serif;
+    font-size:19px;
+    letter-spacing:0.02em;
+  }
+
+  .brand-copy{
+    position:relative;
+    z-index:1;
+    max-width: 420px;
+  }
+
+  .brand-copy .eyebrow{
+    font-size:12.5px;
+    letter-spacing:0.14em;
+    text-transform:uppercase;
+    color: rgba(244,241,233,0.55);
+    margin-bottom:18px;
+  }
+
+  .brand-copy h1{
+    font-family:"Fraunces", Georgia, serif;
+    font-weight:500;
+    font-size:2.6rem;
+    line-height:1.15;
+    margin:0 0 18px;
+    letter-spacing:-0.01em;
+  }
+
+  .brand-copy p{
+    font-size:15px;
+    line-height:1.65;
+    color: rgba(244,241,233,0.68);
+    margin:0;
+  }
+
+  .brand-foot{
+    position:relative;
+    z-index:1;
+    display:flex;
+    gap:28px;
+    font-size:12.5px;
+    color: rgba(244,241,233,0.42);
+  }
+
+  /* ---------- RIGHT: sign-in panel ---------- */
+  .panel{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:48px 32px;
+  }
+
+  .card{
+    width:100%;
+    max-width:400px;
+  }
+
+  .card > h2{
+    font-family:"Fraunces", Georgia, serif;
+    font-weight:500;
+    font-size:1.6rem;
+    margin:0 0 6px;
+    letter-spacing:-0.01em;
+  }
+
+  .card > .sub{
+    font-size:14px;
+    color:var(--muted);
+    margin:0 0 28px;
+  }
+
+  /* role switch, styled like two badge tabs */
+  .role-switch{
+    display:grid;
+    grid-template-columns: 1fr 1fr;
+    border:1px solid var(--line);
+    border-radius:12px;
+    padding:4px;
+    background: rgba(21,26,33,0.03);
+    margin-bottom:28px;
+  }
+
+  .role-switch input{
+    position:absolute;
+    opacity:0;
+    pointer-events:none;
+  }
+
+  .role-switch label{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:8px;
+    padding:10px 10px;
+    border-radius:9px;
+    font-size:13.5px;
+    font-weight:600;
+    color:var(--muted);
+    cursor:pointer;
+    transition: background .18s ease, color .18s ease, box-shadow .18s ease;
+    user-select:none;
+  }
+
+  .role-switch label svg{
+    width:15px; height:15px;
+    opacity:0.65;
+    transition: opacity .18s ease;
+  }
+
+  #role-owner:checked ~ .role-switch label[for="role-owner"],
+  #role-employee:checked ~ .role-switch label[for="role-employee"]{
+    background:var(--paper);
+    color:var(--ink);
+    box-shadow: 0 1px 2px rgba(21,26,33,0.08), 0 0 0 1px var(--line);
+  }
+
+  #role-owner:checked ~ .role-switch label[for="role-owner"] svg,
+  #role-employee:checked ~ .role-switch label[for="role-employee"] svg{
+    opacity:1;
+  }
+
+  #role-owner:checked ~ .role-switch label[for="role-owner"]{ color:var(--brass); }
+  #role-owner:checked ~ .role-switch label[for="role-owner"] svg{ stroke:var(--brass); }
+  #role-employee:checked ~ .role-switch label[for="role-employee"]{ color:var(--slate-blue); }
+  #role-employee:checked ~ .role-switch label[for="role-employee"] svg{ stroke:var(--slate-blue); }
+
+  /* color context swap */
+  #role-employee:checked ~ .fields{ --accent: var(--slate-blue); --accent-soft: var(--slate-blue-soft); }
+
+  .badge-note{
+    display:flex;
+    align-items:center;
+    gap:8px;
+    font-size:12.5px;
+    color:var(--muted);
+    background: var(--accent-soft);
+    border:1px solid var(--line);
+    border-radius:9px;
+    padding:9px 12px;
+    margin-bottom:22px;
+    transition: background .18s ease;
+  }
+
+  .badge-note .dot{
+    width:6px; height:6px;
+    border-radius:50%;
+    background:var(--accent);
+    flex-shrink:0;
+    transition: background .18s ease;
+  }
+
+  #role-owner:checked ~ .fields .badge-note .owner-text{ display:inline; }
+  #role-owner:checked ~ .fields .badge-note .employee-text{ display:none; }
+  #role-employee:checked ~ .fields .badge-note .owner-text{ display:none; }
+  #role-employee:checked ~ .fields .badge-note .employee-text{ display:inline; }
+
+  .field{
+    margin-bottom:16px;
+  }
+
+  .field label{
+    display:block;
+    font-size:12.5px;
+    font-weight:600;
+    color:var(--ink);
+    margin-bottom:7px;
+  }
+
+  .field input{
+    width:100%;
+    padding:11px 13px;
+    border-radius:9px;
+    border:1px solid var(--line);
+    background:#fff;
+    font-size:14.5px;
+    font-family:inherit;
+    color:var(--ink);
+    outline:none;
+    transition: border-color .15s ease, box-shadow .15s ease;
+  }
+
+  .field input::placeholder{ color:#A6ABB3; }
+
+  .field input:focus{
+    border-color:var(--accent);
+    box-shadow: 0 0 0 3px var(--accent-soft);
+  }
+
+  .field.owner-only{ display:none; }
+  #role-owner:checked ~ .fields .field.owner-only{ display:block; }
+
+  .field.employee-only{ display:none; }
+  #role-employee:checked ~ .fields .field.employee-only{ display:block; }
+
+  .row-between{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    margin: 4px 0 22px;
+  }
+
+  .remember{
+    display:flex;
+    align-items:center;
+    gap:8px;
+    font-size:13px;
+    color:var(--muted);
+  }
+
+  .remember input{ accent-color: var(--accent); width:14px; height:14px; }
+
+  .link{
+    font-size:13px;
+    color:var(--accent);
+    text-decoration:none;
+    font-weight:600;
+  }
+  .link:hover{ text-decoration:underline; }
+
+  button.submit{
+    width:100%;
+    padding:12px;
+    border:none;
+    border-radius:9px;
+    background:var(--accent);
+    color:#fff;
+    font-size:14.5px;
+    font-weight:700;
+    letter-spacing:0.01em;
+    cursor:pointer;
+    transition: filter .15s ease, background .18s ease;
+  }
+
+  button.submit:hover{ filter:brightness(1.07); }
+  button.submit:focus-visible,
+  input:focus-visible,
+  a:focus-visible,
+  label:focus-within{
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+  }
+
+  .foot-note{
+    text-align:center;
+    font-size:12.5px;
+    color:var(--muted);
+    margin-top:22px;
+  }
+
+  .foot-note a{ color:var(--ink); font-weight:600; text-decoration:none; }
+  .foot-note a:hover{ text-decoration:underline; }
+
+  @media (max-width: 880px){
+    .stage{ grid-template-columns: 1fr; }
+    .brand{ display:none; }
+    .panel{ padding:40px 20px; }
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    *{ transition:none !important; }
+  }
+</style>
+</head>
+<body>
+
+<div class="stage">
+
+  <!-- Left: identity / brand panel -->
+  <aside class="brand">
+    <div class="mark">
+      <div class="glyph">C</div>
+      <div class="wordmark">Cordant</div>
+    </div>
+
+    <div class="brand-copy">
+      <div class="eyebrow">Company console</div>
+      <h1>One door, two keys.</h1>
+      <p>Owners get the master key — full control of billing, staffing and settings. Employees get a keycard scoped to their own shift and tasks. Choose your access on the right to continue.</p>
+    </div>
+
+    <div class="brand-foot">
+      <span>© 2026 Cordant, Inc.</span>
+      <span>Status: All systems normal</span>
+    </div>
+  </aside>
+
+  <!-- Right: sign-in form -->
+  <main class="panel">
+    <form class="card" action="#" method="post">
+      <h2>Sign in</h2>
+      <p class="sub">Select how you're accessing Cordant today.</p>
+
+      <input type="radio" name="role" id="role-owner" checked>
+      <input type="radio" name="role" id="role-employee">
+
+      <div class="role-switch">
+        <label for="role-owner">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 2 3 6v6c0 5 4 8.5 9 10 5-1.5 9-5 9-10V6l-9-4Z"/></svg>
+          Owner
+        </label>
+        <label for="role-employee">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.4 3.6-8 8-8s8 3.6 8 8"/></svg>
+          Employee
+        </label>
+      </div>
+
+      <div class="fields">
+        <div class="badge-note">
+          <span class="dot"></span>
+          <span class="owner-text">Full access to company settings, billing and team management.</span>
+          <span class="employee-text">Scoped access to your schedule, tasks and timesheet.</span>
+        </div>
+
+        <div class="field owner-only">
+          <label for="company-id">Company ID</label>
+          <input type="text" id="company-id" name="company_id" placeholder="e.g. CORD-4821" autocomplete="off">
+        </div>
+
+        <div class="field employee-only">
+          <label for="employee-id">Employee ID</label>
+          <input type="text" id="employee-id" name="employee_id" placeholder="e.g. EMP-1042" autocomplete="off">
+        </div>
+
+        <div class="field">
+          <label for="email">Email address</label>
+          <input type="email" id="email" name="email" placeholder="you@company.com" autocomplete="email" required>
+        </div>
+
+        <div class="field">
+          <label for="password">Password</label>
+          <input type="password" id="password" name="password" placeholder="••••••••" autocomplete="current-password" required>
+        </div>
+
+        <div class="row-between">
+          <label class="remember">
+            <input type="checkbox" name="remember">
+            Keep me signed in
+          </label>
+          <a class="link" href="#">Forgot password?</a>
+        </div>
+
+        <button class="submit" type="submit">Continue</button>
+      </div>
+
+      <p class="foot-note">New company? <a href="#">Set up your workspace</a></p>
+    </form>
+  </main>
+
+</div>
+
+</body>
+</html>
