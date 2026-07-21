@@ -6,7 +6,12 @@ export type MeetingDocument = HydratedDocument<Meeting>;
 
 @Schema({ timestamps: true })
 export class Meeting {
-  @Prop({ type: Types.ObjectId, ref: SettlementRequest.name, required: true, index: true })
+  @Prop({
+    type: Types.ObjectId,
+    ref: SettlementRequest.name,
+    required: true,
+    index: true,
+  })
   request_id: Types.ObjectId;
 
   @Prop({ required: true })

@@ -6,7 +6,12 @@ export type SettlementDocumentDocument = HydratedDocument<SettlementDocument>;
 
 @Schema()
 export class SettlementDocument {
-  @Prop({ type: Types.ObjectId, ref: Meeting.name, required: true, index: true })
+  @Prop({
+    type: Types.ObjectId,
+    ref: Meeting.name,
+    required: true,
+    index: true,
+  })
   meeting_id: Types.ObjectId;
 
   @Prop({ required: true })
@@ -16,7 +21,8 @@ export class SettlementDocument {
   uploaded_at: Date;
 }
 
-export const SettlementDocumentSchema = SchemaFactory.createForClass(SettlementDocument);
+export const SettlementDocumentSchema =
+  SchemaFactory.createForClass(SettlementDocument);
 
 // Task list rule: "when all meetings have a document, the request reaches
 // its final settled state." That's a derived check (count settlement docs

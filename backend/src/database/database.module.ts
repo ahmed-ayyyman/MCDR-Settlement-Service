@@ -4,7 +4,10 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { Owner, OwnerSchema } from '../schemas/owner.schema';
 import { Company, CompanySchema } from '../schemas/company.schema';
 import { Employee, EmployeeSchema } from '../schemas/employee.schema';
-import { SettlementRequest, SettlementRequestSchema } from '../schemas/request.schema';
+import {
+  SettlementRequest,
+  SettlementRequestSchema,
+} from '../schemas/request.schema';
 import { Meeting, MeetingSchema } from '../schemas/meeting.schema';
 import {
   SettlementDocument,

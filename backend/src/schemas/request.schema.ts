@@ -20,7 +20,12 @@ export type SettlementRequestDocument = HydratedDocument<SettlementRequest>;
 
 @Schema({ timestamps: { createdAt: 'created_at', updatedAt: 'updated_at' } })
 export class SettlementRequest {
-  @Prop({ type: Types.ObjectId, ref: Company.name, required: true, index: true })
+  @Prop({
+    type: Types.ObjectId,
+    ref: Company.name,
+    required: true,
+    index: true,
+  })
   company_id: Types.ObjectId;
 
   @Prop({
@@ -51,7 +56,8 @@ export class SettlementRequest {
   total_fee: number;
 }
 
-export const SettlementRequestSchema = SchemaFactory.createForClass(SettlementRequest);
+export const SettlementRequestSchema =
+  SchemaFactory.createForClass(SettlementRequest);
 
 // Cross-cutting rule from the task list: only one active (non-final) request
 // per company at a time. Final states are Rejected and Closed, so "active"
