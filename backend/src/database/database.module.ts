@@ -13,6 +13,10 @@ import {
   SettlementDocument,
   SettlementDocumentSchema,
 } from '../schemas/settlement-document.schema';
+import {
+  Notification,
+  NotificationSchema,
+} from '../schemas/notification.schema';
 
 @Module({
   imports: [
@@ -30,6 +34,7 @@ import {
       { name: SettlementRequest.name, schema: SettlementRequestSchema },
       { name: Meeting.name, schema: MeetingSchema },
       { name: SettlementDocument.name, schema: SettlementDocumentSchema },
+      { name: Notification.name, schema: NotificationSchema },
     ]),
   ],
   exports: [MongooseModule],

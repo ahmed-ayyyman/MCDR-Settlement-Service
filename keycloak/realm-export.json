@@ -26,6 +26,8 @@
     {
       "username": "test.owner",
       "email": "test.owner@example.com",
+      "firstName": "Test",
+      "lastName": "Owner",
       "enabled": true,
       "emailVerified": true,
       "credentials": [
@@ -36,6 +38,8 @@
     {
       "username": "test.employee",
       "email": "test.employee@example.com",
+      "firstName": "Test",
+      "lastName": "Employee",
       "enabled": true,
       "emailVerified": true,
       "credentials": [
